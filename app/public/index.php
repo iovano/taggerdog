@@ -11,7 +11,7 @@
             highlighted.classList.remove('highlight');
         }
         history.pushState(null, '', '#anchor'+id);
-        highlighted = document.getElementById('image'.id);
+        highlighted = document.getElementById('image'+id);
         highlighted.classList.add('highlight');
     }
   </script>
@@ -55,9 +55,9 @@
         foreach($files as $key => $file) {
             if (!in_array($file, [".", ".."] )) {
                 echo "<tr>";
-                echo "<td><a name='anchor$key'><img id='image$key' src='./assets/images/$file' onclick='highlightImage($key);'></a></td>";
-                echo "<td><input type='text' name='files[$file][persons]' onfocus='highlightImage($key);' value='".($data->$file->persons ?? '')."' title='Hier bitte eintragen, wer auf dem Foto zu sehen ist.'></td>";
-                echo "<td><input type='text' name='files[$file][groups]' onfocus='highlightImage($key);' value='".($data->$file->groups ?? '')."' title='Hier bitte die Bezugsgruppe eintragen (z.B. OEB1 oder KN)'></td>";
+                echo "<td><a name='anchor$key'><img id='image$key' src='./assets/images/$file' onclick='highlightImage(\"$key\");'></a></td>";
+                echo "<td><input type='text' name='files[$file][persons]' onfocus='highlightImage(\"$key\");' value='".($data->$file->persons ?? '')."' title='Hier bitte eintragen, wer auf dem Foto zu sehen ist.'></td>";
+                echo "<td><input type='text' name='files[$file][groups]' onfocus='highlightImage(\"$key\");' value='".($data->$file->groups ?? '')."' title='Hier bitte die Bezugsgruppe eintragen (z.B. OEB1 oder KN)'></td>";
                 echo "</tr>";
             }
         } 
