@@ -17,6 +17,7 @@
 </head>
 <body>
   <?php
+    $dataFile = 'data/data.json';
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
@@ -31,14 +32,14 @@
         }
         return array_filter($input);
     }
-    if (file_exists("data.json")) {
-        $content = file_get_contents("data.json");
+    if (file_exists($dataFile)) {
+        $content = file_get_contents($dataFile);
         $data = json_decode($content);   
     }
     if ($_POST) {
         $newData = array_filter_recursive($_POST['files']);
         $mergedData = isset($data) ? json_encode(array_merge((array) $data, $newData)) : json_encode($newData);
-        file_put_contents("data.json", $mergedData);
+        file_put_contents($dataFile, $mergedData);
         $data = json_decode($mergedData);
     }
   ?>
