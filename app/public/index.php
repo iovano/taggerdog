@@ -14,7 +14,7 @@
         highlighted = document.getElementById('image'+id);
         highlighted.classList.add('highlight');
     }
-    function onload() {
+    function onBodyLoad() {
         let hash = window.location.hash.substr("#anchor".length);
         if (hash) {
             highlightImage(hash);
@@ -22,7 +22,7 @@
     } 
   </script>
 </head>
-<body onload="loaded">
+<body onload="onBodyLoad">
   <?php
     $dataFile = 'data/data.json';
     ini_set('display_errors', 1);
