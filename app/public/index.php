@@ -14,9 +14,15 @@
         highlighted = document.getElementById('image'+id);
         highlighted.classList.add('highlight');
     }
+    function onload() {
+        let hash = window.location.hash.substr("#anchor".length);
+        if (hash) {
+            highlightImage(hash);
+        } 
+    } 
   </script>
 </head>
-<body>
+<body onload="loaded">
   <?php
     $dataFile = 'data/data.json';
     ini_set('display_errors', 1);
