@@ -16,14 +16,13 @@
     }
     function onBodyLoad() {
         let hash = window.location.hash.substr("#anchor".length);
-        console.log(hash);
         if (hash) {
             highlightImage(hash);
         } 
     } 
   </script>
 </head>
-<body onload="onBodyLoad">
+<body onload="onBodyLoad()">
   <?php
     $dataFile = 'data/data.json';
     ini_set('display_errors', 1);
