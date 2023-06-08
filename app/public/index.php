@@ -16,6 +16,7 @@
     }
     function onBodyLoad() {
         let hash = window.location.hash.substr("#anchor".length);
+        console.log(hash);
         if (hash) {
             highlightImage(hash);
         } 
