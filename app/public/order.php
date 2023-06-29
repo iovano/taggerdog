@@ -93,7 +93,7 @@ if ($_POST['files'] ?? false) {
 }
 ?>
 <form method="POST">
-    <input type="submit" value="speichern" />
+    <input type="submit" value="absenden" />
     <table>
         <tr>
             <th>Foto</th><th>Person(en)*</th><th>Gruppe(n)*</th>
@@ -115,4 +115,5 @@ if ($_POST['files'] ?? false) {
         }
         ?>
     </table>
+    <input type="submit" value="absenden" />
 </form></body>
