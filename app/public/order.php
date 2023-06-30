@@ -75,12 +75,19 @@ if ($_POST['files'] ?? false) {
         $digital += ($item['digital'] ?? 0);
         $total += $price;
     }
-    if ($total > 100) {
+    if ($total > 50) {
         $discount = $total * 10 / 100;
     }
-    if ($total > 200) {
+    if ($total > 100) {
         $discount = $total * 20 / 100;
     }
+    if ($total > 200) {
+        $discount = $total * 40 / 100;
+    }
+    if ($total > 300) {
+        $discount = $total * 50 / 100;
+    }
+
     $due = $total - $discount;
     echo "<tr><td>Gesamt</td><td>$prints</td><td>$digital</td><td>".sprintf("%01.2f", $total)."</td></tr>";
     echo "<tr><td>Rabatt</td><td colspan='2'></td><td>- ".sprintf("%01.2f", $discount)."</td></tr>";
@@ -125,7 +132,7 @@ if ($_POST['files'] ?? false) {
     $data['discount'] = $_POST['discount'];
     $data['due'] = $_POST['due'];
     $data['comment'] = $_POST['comment'];
-    $body = var_export($data, true);
+    $body = json_encode($data, true);
     mail("timor@kodal.de", "Bestellung eingegangen", $body, $headers);
     die();
 }
@@ -156,3 +163,4 @@ if ($_POST['files'] ?? false) {
     </table>
     <input type="submit" value="senden" />
 </form></body>
+
