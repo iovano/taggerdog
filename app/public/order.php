@@ -34,7 +34,7 @@
 </head>
 <body onload="onBodyLoad()">
 <?php
-$dataFile = 'data/data.final.json';
+$dataFile = '../var/data/data.final.json';
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
