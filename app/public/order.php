@@ -117,33 +117,46 @@ if ($_POST['files'] ?? false) {
     die();
 } else if ($_POST['email'] ?? false) {
     $data = unserialize($_POST['data']);
+    $orderId = date('ymdhis');
+
     $due = $_POST['due'];
     $t = '';
     $t .= "Bitte überweisen Sie den <strong>Gesamtbetrag in Höhe von ".sprintf("%01.2f", $due)."</strong> ";
     $t .= "Euro";
-    $t .= "<p><strong>per PayPal an timor@kodal.de</strong></p>";
+    $t .= "<p>per <strong>PayPal an timor@kodal.de</strong></p>";
     $t .= "<p>ODER per Überweisung an:</p>";
     $t .= "<p>Timor Kodal<br />";
     $t .= "IBAN: DE98 1004 0000 0551 9459 00 <br />";
     $t .= "BIC:  COBADEFFXXX <br />";
     $t .= "BANK: Commerzbank Berlin <br />";
     $t .= "</p><p>";
-    $t .= "Verwendungszweck:<br />Kitafotos Bethaniendamm + Name des Kindes</p>";
+    $t .= "Verwendungszweck:<br />Foto-Bestellung $orderId</p>";
     $t .= "<p>Nach Zahlungseingang werden die Fotos umgehend angefertigt bzw. die digitalen Abzüge per E-Mail an <strong>$_POST[email]</strong> versendet.</p>";
     $t .= "<p>Vielen Dank für Ihre Bestellung!</p>";
     echo $t;
+    
     $headers = "From: orders@photo.kodal.de \r\n";
     $headers .= "MIME-Version: 1.0\r\n";
     $headers .= "Content-type: text/html; charset=utf-8\r\n";
     $data['email'] = $_POST['email'];
-    mail($data['email'], "Bestellung bei photo.kodal.de eingegangen!", $t, $headers);
 
+    /* send order summary to buyer */
+    mail($data['email'], "Bestellung [$orderId] bei photo.kodal.de eingegangen!", $t, $headers);
+
+    /* prepare order summary for admin */
     $headers .= "Reply-To: $_POST[email]";
+    $data['order'] = $orderId;
     $data['total'] = $_POST['total'];
     $data['discount'] = $_POST['discount'];
     $data['due'] = $_POST['due'];
     $data['comment'] = $_POST['comment'];
     $body = json_encode($data, true);
+
+    /* write order file */
+    $orderFile = '../var/orders/'.$orderId.'.json';
+    file_put_contents($orderFile, $body);
+
+    /* send order summary to admin */
     mail("timor@kodal.de", "Bestellung eingegangen", $body, $headers);
     die();
 }
