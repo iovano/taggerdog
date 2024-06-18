@@ -58,25 +58,33 @@ if ($_POST['files'] ?? false) {
     echo "<form method='POST' class='order' name='order' onsubmit='return validateForm()'>";
     echo "<p>Bitte überprüfen Sie Ihre Bestellung:</p>";
     echo "<table class='order'>";
-    echo "<tr><th>Foto</th><th>Abzüge</th><th>Datei</th><th>Preis</th></tr>";
+    echo "<tr><th>Foto</th><th>Bildtyp</th><th>Abzüge</th><th>Datei</th><th>Preis</th></tr>";
     $total = 0;
     $prints = 0;
     $digital = 0;
     $discount = 0;
+    $stats = [
+            'prints' => ['Gruppe' => 0, 'Portrait' => 0],
+            'digital' => ['Gruppe' => 0, 'Portrait' => 0]
+    ];
     foreach($order as $file => $item) {
-        $price = ( $item['prints'] ?? 0 ) * 8 + ( $item['digital'] ?? 0) * 12;
+        $type = (preg_match('%\b(OEB1|, |OEB2|ON|KN)\b%', $data->$file->persons) > 0) ? 'Gruppe' : 'Portrait';
+        $price = ( $item['prints'] ?? 0 ) * ($type === 'Portrait' ? 12 : 8) + ( $item['digital'] ?? 0) * ($type === 'Portrait' ? 15 : 12);
         echo "<tr>";
         echo "</e><td><img src='/assets/images/$file'></td>";
+        echo "<td>".$type."</td>";
         echo "<td>".($item['prints'] ?? '-')."</td>";
         echo "<td>".($item['digital'] ?? '-')."</td>";
         echo "<td>".sprintf("%01.2f", $price)."</td>";
         echo "</tr>";
+        $stats['prints'][$type] += ($item['prints'] ?? 0);
+        $stats['digital'][$type] += ($item['digital'] ?? 0);
         $prints += ($item['prints'] ?? 0);
         $digital += ($item['digital'] ?? 0);
         $total += $price;
     }
-    if ($total > 50) {
-        $discount = $total * 10 / 100;
+    if ($total > 40) {
+        $discount = $total * 15 / 100;
     }
     if ($total > 100) {
         $discount = $total * 20 / 100;
@@ -87,11 +95,14 @@ if ($_POST['files'] ?? false) {
     if ($total > 300) {
         $discount = $total * 50 / 100;
     }
+    $setDiscount = floor(min($stats['prints']['Gruppe'], $stats['prints']['Portrait'] / 3)) * 24;
+    $setDiscount += floor(min($stats['digital']['Gruppe'], $stats['digital']['Portrait'] / 3)) * 22;
 
+    $discount = max($setDiscount, $discount);
     $due = $total - $discount;
-    echo "<tr><td>Gesamt</td><td>$prints</td><td>$digital</td><td>".sprintf("%01.2f", $total)."</td></tr>";
-    echo "<tr><td>Rabatt</td><td colspan='2'></td><td>- ".sprintf("%01.2f", $discount)."</td></tr>";
-    echo "<tr><td>Zahlbetrag</td><td colspan='2'></td><td><strong>".sprintf("%01.2f", $due)."</strong></td></tr>";
+    echo "<tr><td colspan='2'>Gesamt</td><td>$prints</td><td>$digital</td><td>".sprintf("%01.2f", $total)."</td></tr>";
+    echo "<tr><td colspan='2'>Rabatt</td><td colspan='2'></td><td>- ".sprintf("%01.2f", $discount)."</td></tr>";
+    echo "<tr><td>Zahlbetrag</td><td colspan='3'></td><td><strong>".sprintf("%01.2f", $due)."</strong></td></tr>";
     echo "</table>";
     echo "<p>Bitte geben Sie hier Ihre E-Mailadresse an: <br />";
     echo "<input type='email' name='email'> <br />";
@@ -154,7 +165,7 @@ if ($_POST['files'] ?? false) {
                 echo "<td>".($data->$file->persons ?? '')."</td>";
                 echo "<td>".($data->$file->groups ?? '')."</td>";
                 echo "<td><input onfocus='highlightImage(\"$key\");' name='files[$file][prints]'></td>";
-                echo "<td><input onfocus='highlightImage(\"$key\");' type='checkbox' name='files[$file][digital]' value='1'></td>";
+                echo "<td><input type='checkbox' name='files[$file][digital]' value='1'></td>";
                 echo "<td></td>";
                 echo "</tr>";
             }
